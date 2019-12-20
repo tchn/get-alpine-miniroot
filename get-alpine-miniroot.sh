@@ -1,12 +1,13 @@
 #!/bin/bash
-#set +x
 
 arch="x86_64" # or x86, armhf, aarch64, ppc64le, s390x, armv7
+save_dir="$1"
 
 readonly CONNECT_TIMEOUT=5
 
 on_error() {
   printf "[ $(date +'%Y-%m-%dT%H:%M:%S')]: %s\n" "$@" >&2
+  exit
 }
 
 check_http_srv() {
@@ -66,7 +67,7 @@ main() {
   local sha256hash_regex="[0-9a-z]{64}"
   local domain_name="dl-cdn.alpinelinux.org"
   local common_name="default.ssl.fastly.net"
-  local save_dir="./files"
+  local save_dir="$save_dir"
   local arch="$arch"
   local BASH_REMATCH=
 
@@ -120,6 +121,11 @@ main() {
     remote_file_hash="${BASH_REMATCH[0]}"
   fi
 
+  ### prepare directory to save file
+  if ! [[ -d "${save_dir}" ]]; then
+    mkdir -p "${save_dir}"
+  fi
+
   ### check if you already have current minirootfs file in local
   if [[ -f "${save_dir}/alpine-minirootfs-${major}.${minor}.${build}-${arch}.tar.gz" ]]; then
     local_file_hash=$(sha256sum "${save_dir}/alpine-minirootfs-${major}.${minor}.${build}-${arch}.tar.gz")
@@ -134,4 +140,7 @@ main() {
   fi
 }
 
+if [[ -z "${save_dir}" ]]; then
+  on_error "Output directory not speficied"
+fi
 main
