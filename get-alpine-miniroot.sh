@@ -68,7 +68,7 @@ match() {
 main() {
   local alpine_url="https://alpinelinux.org/downloads/"
   local version_string_regex="<p>Current Alpine Version <strong>([0-9]+).([0-9]+).([0-9]+)</strong>"
-  local ipv4_digit_regex="([[:digit:]]{1,3}.)+[[:digit:]]{1,3}"
+  local ipv4_digit_regex="([[:digit:]]{1,3}\.)+[[:digit:]]{1,3}"
   local sha256hash_regex="[0-9a-z]{64}"
   local domain_name="dl-cdn.alpinelinux.org"
   local common_name="default.ssl.fastly.net"
