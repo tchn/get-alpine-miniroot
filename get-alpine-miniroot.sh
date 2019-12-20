@@ -2,12 +2,6 @@
 #set +x
 
 arch="x86_64" # or x86, armhf, aarch64, ppc64le, s390x, armv7
-miniroot_url=""
-dl_filename=""
-server_ip=""
-filehash=""
-dl_filehash=""
-query_answer=""
 
 readonly CONNECT_TIMEOUT=5
 
