@@ -66,7 +66,7 @@ main() {
   local ipv4_digit_regex="([[:digit:]]{1,3}\.)+[[:digit:]]{1,3}"
   local sha256hash_regex="[0-9a-z]{64}"
   local domain_name="dl-cdn.alpinelinux.org"
-  local common_name="default.ssl.fastly.net"
+  local common_name="dl-cdn.alpinelinux.org"
   local save_dir="$save_dir"
   local arch="$arch"
   local BASH_REMATCH=
