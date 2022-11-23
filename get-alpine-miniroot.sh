@@ -2,7 +2,6 @@
 
 arch="x86_64" # or x86, armhf, aarch64, ppc64le, s390x, armv7
 save_dir="$1"
-
 readonly CONNECT_TIMEOUT=5
 
 on_error() {
@@ -27,7 +26,7 @@ check_http_srv() {
 
   echo "url: $url"
   echo "extargs: ${extargs[@]}"
-  curl -s --connect-timeout $CONNECT_TIMEOUT -I ${extargs[@]} "$url"
+  curl -s -k --connect-timeout $CONNECT_TIMEOUT -I ${extargs[@]} "$url"
 }
 
 match() {
@@ -50,7 +49,7 @@ match() {
   set -x
   if [[ "$is_remote" -eq 1 ]]; then
     set +x
-    string=$(curl --connect-timeout $CONNECT_TIMEOUT -s "$string")
+    string=$(curl -k --connect-timeout $CONNECT_TIMEOUT -s "$string")
   fi
 
   if [[ "$string" =~ $regex ]]; then
@@ -113,7 +112,7 @@ main() {
   fi
 
   ### read published file hash
-  remote_file_hash=$(curl --resolve "${common_name}:443:${server_ip}" -H "Host:${domain_name}" "https://${common_name}/alpine/v${major}.${minor}/releases/${arch}/alpine-minirootfs-${major}.${minor}.${build}-${arch}.tar.gz.sha256")
+  remote_file_hash=$(curl -k --resolve "${common_name}:443:${server_ip}" -H "Host:${domain_name}" "https://${common_name}/alpine/v${major}.${minor}/releases/${arch}/alpine-minirootfs-${major}.${minor}.${build}-${arch}.tar.gz.sha256")
   if ! match -s "$remote_file_hash" -r "$sha256hash_regex"; then
     on_error "Can not read remote file hash"
     exit 6
@@ -132,11 +131,11 @@ main() {
     if [[ "$remote_file_hash" -eq "$local_file_hash" ]]; then
       break # no need to download
     else # download
-     curl --resolve "${common_name}:443:${server_ip}" -H "Host:${domain_name}" "https://${common_name}/alpine/v${major}.${minor}/releases/${arch}/alpine-minirootfs-${major}.${minor}.${build}-${arch}.tar.gz" -o "${save_dir}/alpine-minirootfs-${major}.${minor}.${build}-${arch}.tar.gz"
+     curl -k --resolve "${common_name}:443:${server_ip}" -H "Host:${domain_name}" "https://${common_name}/alpine/v${major}.${minor}/releases/${arch}/alpine-minirootfs-${major}.${minor}.${build}-${arch}.tar.gz" -o "${save_dir}/alpine-minirootfs-${major}.${minor}.${build}-${arch}.tar.gz"
     fi
     #printf "File alpine-minirootfs-${major}.${minor}.${build}-${arch}.tar.gz exists\n"
   else #download
-    curl --resolve "${common_name}:443:${server_ip}" -H "Host:${domain_name}" "https://${common_name}/alpine/v${major}.${minor}/releases/${arch}/alpine-minirootfs-${major}.${minor}.${build}-${arch}.tar.gz" -o "${save_dir}/alpine-minirootfs-${major}.${minor}.${build}-${arch}.tar.gz"
+    curl -k --resolve "${common_name}:443:${server_ip}" -H "Host:${domain_name}" "https://${common_name}/alpine/v${major}.${minor}/releases/${arch}/alpine-minirootfs-${major}.${minor}.${build}-${arch}.tar.gz" -o "${save_dir}/alpine-minirootfs-${major}.${minor}.${build}-${arch}.tar.gz"
   fi
 }
 
