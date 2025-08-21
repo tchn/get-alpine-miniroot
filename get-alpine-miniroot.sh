@@ -31,6 +31,7 @@ check_http_srv() {
 
 match() {
   local string
+  local final_string=""
   local regex
   local opt
   local is_remote=0
@@ -49,10 +50,12 @@ match() {
   set -x
   if [[ "$is_remote" -eq 1 ]]; then
     set +x
-    string=$(curl -k --connect-timeout $CONNECT_TIMEOUT -s "$string")
+    final_string=$(curl -k --connect-timeout $CONNECT_TIMEOUT -s "$string")
+  else
+    final_string="$string"
   fi
 
-  if [[ "$string" =~ $regex ]]; then
+  if [[ $final_string =~ $regex ]]; then
     return 0
   else
     return 1
@@ -61,14 +64,13 @@ match() {
 
 main() {
   local alpine_url="https://alpinelinux.org/downloads/"
-  local version_string_regex="<p>Current Alpine Version <strong>([0-9]+).([0-9]+).([0-9]+)</strong>"
+  local version_string_regex="<strong>([[:digit:]]{1})\.([[:digit:]]{1,2})\.([[:digit:]]{1,2})</strong>"
   local ipv4_digit_regex="([[:digit:]]{1,3}\.)+[[:digit:]]{1,3}"
   local sha256hash_regex="[0-9a-z]{64}"
   local domain_name="dl-cdn.alpinelinux.org"
   local common_name="dl-cdn.alpinelinux.org"
   local save_dir="$save_dir"
   local arch="$arch"
-  local BASH_REMATCH=
 
   local major
   local minor
